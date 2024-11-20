@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRASP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+
+      theme: {
+        fontType: {
+          sans: '"Bangers"',
+          logo: '"Markazi"',
+        },
+        extend: {
+          colors: {
+            primary: "#6E56FE",
+            secondary: "#E5E7EB",
+            btn_default: "#a78bfa",
+            btn_hover: "#8b5cf6",
+            btn_focus: "#4c1d95",
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      }
+    </style>
+  <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (
+      localStorage.getItem("color-theme") === "dark" ||
+      (!("color-theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+  <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="flex items-center space-x-2 rtl:space-x-reverse">
+        <img src="./img/grasp-logo-dark.svg" class="h-0 dark:h-9" alt="Flowbite Logo" />
+        <img src="./img/grasp-logo-light.svg" class="dark:hidden h-9" alt="Flowbite Logo" />
+        <span
+          class="font-[Bangers] self-center text-blue-700 text-3xl font-semibold whitespace-nowrap dark:text-white">GRASP</span>
+      </a>
+      <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <button type="button"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Sign Up
+        </button>
+        <button id="theme-toggle" type="button"
+          class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+          <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+              fill-rule="evenodd" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <button data-collapse-toggle="navbar-sticky" type="button"
+          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="navbar-sticky" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15" />
+          </svg>
+        </button>
+      </div>
+      <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+        <ul
+          class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <li>
+            <a href="./Index.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              aria-current="page">Home</a>
+          </li>
+          <li>
+            <a href="./About.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
+          </li>
+
+          <li>
+            <a href="./Pricing.html"
+              class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500">Pricing</a>
+          </li>
+          <li>
+            <a href="./Team.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Team</a>
+          </li>
+          <li>
+            <a href="./Contact.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+          </li>
+          <li>
+            <a href="./Blog.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Blog</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- END OF NAVBAR -->
+  <section class="bg-white dark:bg-gray-900 mt-[68px] p-4">
+    <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+      <div class="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
+        <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Awesome Pricing Plan</h2>
+        <p class="mb-5 font-medium text-gray-500 sm:text-xl dark:text-gray-400">There are many variations of passages of
+          Lorem Ipsum available but the majority have suffered alteration in some form.</p>
+      </div>
+      <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
+        <!-- Pricing Card -->
+        <div
+          class="flex flex-col p-6 mx-auto max-w-lg  text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+          <h3 class="mb-4 text-3xl font-bold">Starter</h3>
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best option for personal use & for your next
+            project.</p>
+          <div class="flex items-baseline my-8">
+            <span class="mr-2 text-5xl font-extrabold">$29.00</span>
+            <span class="text-gray-500 dark:text-gray-400">/month</span>
+          </div>
+          <!-- List -->
+          <ul role="list" class="mb-8 space-y-4 text-left">
+            <h3 class="mb-4 text-3xl font-bold">Features</h3>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Individual configuration</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>No setup, or hidden fees</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Team size: <span class="font-semibold">1 developer</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Premium support: <span class="font-semibold">6 months</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Free updates: <span class="font-semibold">6 months</span></span>
+            </li>
+          </ul>
+          <button type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 font-medium rounded-lg text-lg px-5 py-2.5 inline-flex justify-center w-fit text-center">Purchase
+            Now</button>
+        </div>
+        <!-- Pricing Card -->
+        <div
+          class="flex flex-col p-6 mx-auto max-w-lg  text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+          <h3 class="mb-4 text-3xl font-bold">Basic</h3>
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Relevant for multiple users, extended &
+            premium support.</p>
+          <div class="flex  items-baseline my-8">
+            <span class="mr-2 text-5xl font-extrabold">$99.00</span>
+            <span class="text-gray-500 dark:text-gray-400">/month</span>
+          </div>
+          <!-- List -->
+          <ul role="list" class="mb-8 space-y-4 text-left">
+            <h3 class="mb-4 text-3xl font-bold">Features</h3>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Individual configuration</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>No setup, or hidden fees</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Team size: <span class="font-semibold">10 developers</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Premium support: <span class="font-semibold">24 months</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Free updates: <span class="font-semibold">24 months</span></span>
+            </li>
+          </ul>
+          <button type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 font-medium rounded-lg text-lg px-5 py-2.5 inline-flex justify-center w-fit text-center">Purchase
+            Now</button>
+
+        </div>
+        <!-- Pricing Card -->
+        <div
+          class="flex flex-col p-6 mx-auto max-w-lg  text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+          <h3 class="mb-4 text-3xl font-bold">Premium</h3>
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Best for large scale uses and extended
+            redistribution rights.</p>
+          <div class="flex justify-center items-baseline my-8">
+            <span class="mr-2 text-5xl font-extrabold">$499</span>
+            <span class="text-gray-500 dark:text-gray-400">/month</span>
+          </div>
+          <!-- List -->
+          <ul role="list" class="mb-8 space-y-4 text-left">
+            <h3 class="mb-4 text-3xl font-bold">Features</h3>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Individual configuration</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>No setup, or hidden fees</span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Team size: <span class="font-semibold">100+ developers</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Premium support: <span class="font-semibold">36 months</span></span>
+            </li>
+            <li class="flex items-center space-x-3">
+              <!-- Icon -->
+              <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor"
+                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"></path>
+              </svg>
+              <span>Free updates: <span class="font-semibold">36 months</span></span>
+            </li>
+          </ul>
+          <button type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-200 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 font-medium rounded-lg text-lg px-5 py-2.5 inline-flex justify-center w-fit text-center">Purchase
+            Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--  -->
+  <div class="p-4 py-20 w-full mx-auto bg-blue-700 dark:bg-gray-900">
+    <h1 class="mb-4 text-center text-2xl font-bold font-[Bangers] tracking-widest text-white dark:text-white">
+      Testimonials</h1>
+    <h2 class="mb-4 text-center text-4xl font-extrabold text-white dark:text-white">What Our Clients Say</h2>
+    <p class="mb-5 max-w-[580px] mx-auto text-center font-medium text-gray-400 sm:text-xl dark:text-gray-400">There are
+      many variations of passages of
+      Lorem Ipsum available but the majority have suffered alteration in some form.</p>
+    <!--  -->
+    <div class="relative overflow-hidden w-full max-w-7xl p-4 mx-auto">
+      <!-- Carousel Wrapper -->
+      <div id="carouselItems" class="gap-3 flex transition-transform duration-500">
+        <!-- Carousel Items -->
+        <div class="flex-shrink-0 space-y-5  rounded-lg w-full sm:w-1/2 md:w-1/3 bg-white shadow-lg p-8">
+          <img src="./img/stars.svg" alt="">
+          <h1 class="text-gray-400">
+            “Our members are so impressed. It's intuitive. It's clean.
+            It's distraction free. If you're building a community.’’
+          </h1>
+          <div class="flex gap-3">
+            <img src="./img/user.png" alt="">
+            <div>
+              <h1 class="font-semibold">Sabo Masties</h1>
+              <p class="font-semibold text-gray-400 text-sm">Founder @ Rolex</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-shrink-0 space-y-5  rounded-lg w-full sm:w-1/2 md:w-1/3 bg-white shadow-lg p-8">
+          <img src="./img/stars.svg" alt="">
+          <h1 class="text-gray-400">
+            “Our members are so impressed. It's intuitive. It's clean.
+            It's distraction free. If you're building a community.’’
+          </h1>
+          <div class="flex gap-3">
+            <img src="./img/user.png" alt="">
+            <div>
+              <h1 class="font-semibold">Sabo Masties</h1>
+              <p class="font-semibold text-gray-400 text-sm">Founder @ Rolex</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-shrink-0 space-y-5  rounded-lg w-full sm:w-1/2 md:w-1/3 bg-white shadow-lg p-8">
+          <img src="./img/stars.svg" alt="">
+          <h1 class="text-gray-400">
+            “Our members are so impressed. It's intuitive. It's clean.
+            It's distraction free. If you're building a community.’’
+          </h1>
+          <div class="flex gap-3">
+            <img src="./img/user.png" alt="">
+            <div>
+              <h1 class="font-semibold">Sabo Masties</h1>
+              <p class="font-semibold text-gray-400 text-sm">Founder @ Rolex</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-shrink-0 space-y-5  rounded-lg w-full sm:w-1/2 md:w-1/3 bg-white shadow-lg p-8">
+          <img src="./img/stars.svg" alt="">
+          <h1 class="text-gray-400">
+            “Our members are so impressed. It's intuitive. It's clean.
+            It's distraction free. If you're building a community.’’
+          </h1>
+          <div class="flex gap-3">
+            <img src="./img/user.png" alt="">
+            <div>
+              <h1 class="font-semibold">Sabo Masties</h1>
+              <p class="font-semibold text-gray-400 text-sm">Founder @ Rolex</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-shrink-0 space-y-5  rounded-lg w-full sm:w-1/2 md:w-1/3 bg-white shadow-lg p-8">
+          <img src="./img/stars.svg" alt="">
+          <h1 class="text-gray-400">
+            “Our members are so impressed. It's intuitive. It's clean.
+            It's distraction free. If you're building a community.’’
+          </h1>
+          <div class="flex gap-3">
+            <img src="./img/user.png" alt="">
+            <div>
+              <h1 class="font-semibold">Sabo Masties</h1>
+              <p class="font-semibold text-gray-400 text-sm">Founder @ Rolex</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons Below Carousel -->
+    <div class="flex justify-center pt-4 space-x-4 ">
+      <button id="prevButton"
+        class="bg-white text-gray-700 px-5 py-3 rounded-lg hover:bg-gray-300 focus:outline-none transition-colors">
+        <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+          width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 12h14M5 12l4-4m-4 4 4 4" />
+        </svg>
+
+
+      </button>
+      <button id="nextButton"
+        class="bg-white text-gray-700 px-5 py-3 rounded-lg hover:bg-gray-300 focus:outline-none transition-colors">
+        <svg class="w-6 h-6 text-gray-800 dark:text-black" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+          width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 12H5m14 0-4 4m4-4-4-4" />
+        </svg>
+
+
+      </button>
+    </div>
+
+
+  </div>
+
+  <!--  -->
+<hr>
+  <!-- FEATURES SECTION -->
+  <section class="px-4 py-10 md:py-20 bg-white dark:bg-gray-900 relative">
+    <svg class="absolute top-5 left-5 " width="48" height="134" viewBox="0 0 48 134" fill="" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="45.6673" cy="132" r="1.66667" transform="rotate(180 45.6673 132)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="117.333" r="1.66667" transform="rotate(180 45.6673 117.333)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="102.667" r="1.66667" transform="rotate(180 45.6673 102.667)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="88.0001" r="1.66667" transform="rotate(180 45.6673 88.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="73.3335" r="1.66667" transform="rotate(180 45.6673 73.3335)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="45.0001" r="1.66667" transform="rotate(180 45.6673 45.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="16.0001" r="1.66667" transform="rotate(180 45.6673 16.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="59.0001" r="1.66667" transform="rotate(180 45.6673 59.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="30.6668" r="1.66667" transform="rotate(180 45.6673 30.6668)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="1.66683" r="1.66667" transform="rotate(180 45.6673 1.66683)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="132" r="1.66667" transform="rotate(180 31.0013 132)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="117.333" r="1.66667" transform="rotate(180 31.0013 117.333)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="102.667" r="1.66667" transform="rotate(180 31.0013 102.667)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="88.0001" r="1.66667" transform="rotate(180 31.0013 88.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="73.3335" r="1.66667" transform="rotate(180 31.0013 73.3335)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="45.0001" r="1.66667" transform="rotate(180 31.0013 45.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="16.0001" r="1.66667" transform="rotate(180 31.0013 16.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="59.0001" r="1.66667" transform="rotate(180 31.0013 59.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="30.6668" r="1.66667" transform="rotate(180 31.0013 30.6668)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="1.66683" r="1.66667" transform="rotate(180 31.0013 1.66683)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="132" r="1.66667" transform="rotate(180 16.3333 132)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="117.333" r="1.66667" transform="rotate(180 16.3333 117.333)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="102.667" r="1.66667" transform="rotate(180 16.3333 102.667)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="88.0001" r="1.66667" transform="rotate(180 16.3333 88.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="73.3335" r="1.66667" transform="rotate(180 16.3333 73.3335)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="45.0001" r="1.66667" transform="rotate(180 16.3333 45.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="16.0001" r="1.66667" transform="rotate(180 16.3333 16.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="59.0001" r="1.66667" transform="rotate(180 16.3333 59.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="30.6668" r="1.66667" transform="rotate(180 16.3333 30.6668)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="1.66683" r="1.66667" transform="rotate(180 16.3333 1.66683)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="132" r="1.66667" transform="rotate(180 1.66732 132)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="117.333" r="1.66667" transform="rotate(180 1.66732 117.333)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="102.667" r="1.66667" transform="rotate(180 1.66732 102.667)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="88.0001" r="1.66667" transform="rotate(180 1.66732 88.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="73.3335" r="1.66667" transform="rotate(180 1.66732 73.3335)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="45.0001" r="1.66667" transform="rotate(180 1.66732 45.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="16.0001" r="1.66667" transform="rotate(180 1.66732 16.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="59.0001" r="1.66667" transform="rotate(180 1.66732 59.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="30.6668" r="1.66667" transform="rotate(180 1.66732 30.6668)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="1.66683" r="1.66667" transform="rotate(180 1.66732 1.66683)" fill="#13C296"></circle>
+    </svg>
+    <svg class="absolute bottom-5 right-5" width="48" height="134" viewBox="0 0 48 134" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="45.6673" cy="132" r="1.66667" transform="rotate(180 45.6673 132)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="117.333" r="1.66667" transform="rotate(180 45.6673 117.333)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="102.667" r="1.66667" transform="rotate(180 45.6673 102.667)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="88.0001" r="1.66667" transform="rotate(180 45.6673 88.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="73.3335" r="1.66667" transform="rotate(180 45.6673 73.3335)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="45.0001" r="1.66667" transform="rotate(180 45.6673 45.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="16.0001" r="1.66667" transform="rotate(180 45.6673 16.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="59.0001" r="1.66667" transform="rotate(180 45.6673 59.0001)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="30.6668" r="1.66667" transform="rotate(180 45.6673 30.6668)" fill="#13C296"></circle>
+      <circle cx="45.6673" cy="1.66683" r="1.66667" transform="rotate(180 45.6673 1.66683)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="132" r="1.66667" transform="rotate(180 31.0013 132)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="117.333" r="1.66667" transform="rotate(180 31.0013 117.333)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="102.667" r="1.66667" transform="rotate(180 31.0013 102.667)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="88.0001" r="1.66667" transform="rotate(180 31.0013 88.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="73.3335" r="1.66667" transform="rotate(180 31.0013 73.3335)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="45.0001" r="1.66667" transform="rotate(180 31.0013 45.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="16.0001" r="1.66667" transform="rotate(180 31.0013 16.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="59.0001" r="1.66667" transform="rotate(180 31.0013 59.0001)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="30.6668" r="1.66667" transform="rotate(180 31.0013 30.6668)" fill="#13C296"></circle>
+      <circle cx="31.0013" cy="1.66683" r="1.66667" transform="rotate(180 31.0013 1.66683)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="132" r="1.66667" transform="rotate(180 16.3333 132)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="117.333" r="1.66667" transform="rotate(180 16.3333 117.333)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="102.667" r="1.66667" transform="rotate(180 16.3333 102.667)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="88.0001" r="1.66667" transform="rotate(180 16.3333 88.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="73.3335" r="1.66667" transform="rotate(180 16.3333 73.3335)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="45.0001" r="1.66667" transform="rotate(180 16.3333 45.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="16.0001" r="1.66667" transform="rotate(180 16.3333 16.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="59.0001" r="1.66667" transform="rotate(180 16.3333 59.0001)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="30.6668" r="1.66667" transform="rotate(180 16.3333 30.6668)" fill="#13C296"></circle>
+      <circle cx="16.3333" cy="1.66683" r="1.66667" transform="rotate(180 16.3333 1.66683)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="132" r="1.66667" transform="rotate(180 1.66732 132)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="117.333" r="1.66667" transform="rotate(180 1.66732 117.333)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="102.667" r="1.66667" transform="rotate(180 1.66732 102.667)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="88.0001" r="1.66667" transform="rotate(180 1.66732 88.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="73.3335" r="1.66667" transform="rotate(180 1.66732 73.3335)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="45.0001" r="1.66667" transform="rotate(180 1.66732 45.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="16.0001" r="1.66667" transform="rotate(180 1.66732 16.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="59.0001" r="1.66667" transform="rotate(180 1.66732 59.0001)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="30.6668" r="1.66667" transform="rotate(180 1.66732 30.6668)" fill="#13C296"></circle>
+      <circle cx="1.66732" cy="1.66683" r="1.66667" transform="rotate(180 1.66732 1.66683)" fill="#13C296"></circle>
+    </svg>
+    <h3 class="mx-auto text-[28px] text-black dark:text-blue-700 text-center font-bold font-[Bangers] tracking-widest">
+      FAQ
+    </h3>
+    <h1 class="text-[40px] text-black dark:text-white font-bold text-center mx-auto">
+      Any Questions? Look Here
+    </h1>
+    <p class="mb-[64px] text-gray-500 text-[20px] max-w-[580px] mx-auto font-semibold dark:text-gray-300  text-center">
+      There are many variations of passages of Lorem Ipsum available but the-
+      majority have suffered alteration in some form.
+    </p>
+    <div class="p-4 mx-auto max-w-[1200px] grid grid-cols-1 gap-[64px] md:grid-cols-2">
+      <!--  -->
+      <div class="group mx-auto flex  gap-[32px] max-w-[543px] ">
+        <div class="z-10 relative">
+          <div class="w-[50px] h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-blue-700 dark:bg-blue-700 rounded-lg text-gray-300 dark:text-white"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+
+        </div>
+        <div class="">
+          <h1 class="text-[28px] font-bold dark:text-white text-black">
+            Is Grasp Well-documented?
+          </h1>
+          <p class="text-[20px] font-semibold dark:text-gray-300 text-gray-400">
+            It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your
+            monthly
+            content ui/ux strategy that we do writing your first blog post.
+          </p>
+        </div>
+      </div>
+      <!--  -->
+      <div class="group mx-auto flex  gap-[32px] max-w-[543px] ">
+        <div class="z-10 relative">
+          <div class="w-[50px] h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-blue-700 dark:bg-blue-700 rounded-lg text-gray-300 dark:text-white"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+      
+        </div>
+        <div class="">
+          <h1 class="text-[28px] font-bold dark:text-white text-black">
+            Is Grasp Well-documented?
+          </h1>
+          <p class="text-[20px] font-semibold dark:text-gray-300 text-gray-400">
+            It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your
+            monthly
+            content ui/ux strategy that we do writing your first blog post.
+          </p>
+        </div>
+      </div>
+      <!--  -->
+      <div class="group mx-auto flex  gap-[32px] max-w-[543px] ">
+        <div class="z-10 relative">
+          <div class="w-[50px] h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-blue-700 dark:bg-blue-700 rounded-lg text-gray-300 dark:text-white"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+      
+        </div>
+        <div class="">
+          <h1 class="text-[28px] font-bold dark:text-white text-black">
+            Is Grasp Well-documented?
+          </h1>
+          <p class="text-[20px] font-semibold dark:text-gray-300 text-gray-400">
+            It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your
+            monthly
+            content ui/ux strategy that we do writing your first blog post.
+          </p>
+        </div>
+      </div>
+      <!--  -->
+    <div class="group mx-auto flex  gap-[32px] max-w-[543px] ">
+      <div class="z-10 relative">
+        <div class="w-[50px] h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+        </div>
+        <svg class="w-[50px] h-[55px] p-2 bg-blue-700 dark:bg-blue-700 rounded-lg text-gray-300 dark:text-white"
+          aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+    
+      </div>
+      <div class="">
+        <h1 class="text-[28px] font-bold dark:text-white text-black">
+          Is Grasp Well-documented?
+        </h1>
+        <p class="text-[20px] font-semibold dark:text-gray-300 text-gray-400">
+          It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your
+          monthly
+          content ui/ux strategy that we do writing your first blog post.
+        </p>
+      </div>
+    </div>
+    </div>
+  </section>
+  <!-- END OF FEATURES -->
+  <!-- FOOTER SECTION -->
+  <section class=" mx-auto mb-[85px] relative bg-white dark:bg-gray-800">
+    <img class="max-h-[400px]  absolute " src="./img/footer1.png" alt="">
+    <img class="absolute right-0 bottom-0 z-10" src="./img/footer2.png" alt="">
+    <div class="p-4  grid grid-cols-1 gap-[32px] md:grid-cols-3">
+      <!--  -->
+      <div class="max-w-[330px]">
+        <a href="#" class="flex items-center space-x-2 rtl:space-x-reverse">
+          <img src="./img/grasp-logo-dark.svg" class="h-0 dark:h-9" alt="Flowbite Logo" />
+          <img src="./img/grasp-logo-light.svg" class="dark:hidden h-9" alt="Flowbite Logo" />
+          <span
+            class="font-[Bangers] self-center text-blue-700 text-3xl font-semibold whitespace-nowrap dark:text-white">GRASP</span>
+        </a>
+        <h2 class="text-gray-500 dark:text-white font-semibold text-[20px]">
+          We create digital experiences for brands and companies by using
+          technology.
+        </h2>
+        <div class="grid grid-cols-4 max-w-[200px]">
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M22 5.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.343 8.343 0 0 1-2.605.981A4.13 4.13 0 0 0 15.85 4a4.068 4.068 0 0 0-4.1 4.038c0 .31.035.618.105.919A11.705 11.705 0 0 1 3.4 4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 6.1 13.635a4.192 4.192 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 2 18.184 11.732 11.732 0 0 0 8.291 20 11.502 11.502 0 0 0 19.964 8.5c0-.177 0-.349-.012-.523A8.143 8.143 0 0 0 22 5.892Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700
+              aria-hidden=" true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+              viewBox="0 0 24 24">
+              <path fill="currentColor" fill-rule="evenodd"
+                d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M12.51 8.796v1.697a3.738 3.738 0 0 1 3.288-1.684c3.455 0 4.202 2.16 4.202 4.97V19.5h-3.2v-5.072c0-1.21-.244-2.766-2.128-2.766-1.827 0-2.139 1.317-2.139 2.676V19.5h-3.19V8.796h3.168ZM7.2 6.106a1.61 1.61 0 0 1-.988 1.483 1.595 1.595 0 0 1-1.743-.348A1.607 1.607 0 0 1 5.6 4.5a1.601 1.601 0 0 1 1.6 1.606Z"
+                clip-rule="evenodd" />
+              <path d="M7.2 8.809H4V19.5h3.2V8.809Z" />
+            </svg></a>
+        </div>
+      </div>
+      <!--  -->
+      <div class="min-w-[120px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">About Us</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Home</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Features
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">About</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">
+            Testimonial</p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[130px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Features</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">How it
+            works</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Privacy
+            policy</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Terms of
+            service</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Refund
+            policy</p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[140px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Our Products</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">LineIcons
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Ecommerce
+            GTML</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Tailwind
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Plainwind
+          </p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[230px] ">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Latest blog</h2>
+        <a href="" class="flex gap-5 group">
+          <img class="h-[50px]" src="./img/blog4.png" alt="">
+          <p class=" group-hover:text-gray-400 font-semibold text-gray-500 dark:text-white">I think really important to
+            design with...</p>
+        </a>
+        <a href="" class="flex gap-5 group">
+          <img class="h-[50px]" src="./img/blog5.png" alt="">
+          <p class="font-semibold group-hover:text-gray-400 text-gray-500 dark:text-white">Recognising the need is the
+            primary</p>
+        </a>
+
+      </div>
+      <!--  -->
+    </div>
+    <div class="">
+      <hr class="border-gray-300 my-8">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="grid grid-cols-3 p-4">
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Privacy policy</p>
+          </a>
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Legal notice</p>
+          </a>
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Terms of service</p>
+          </a>
+        </div>
+        <p class="p-4 md:ml-auto font-semibold text-blue-700 dark:text-white ">Designed and Developed by <span
+            class="text-black dark:text-blue-700 font-bold font-[Bangers] tracking-wider text-[18px]">GubliAS</span></p>
+
+      </div>
+    </div>
+  </section>
+
+
+  <footer
+    class="fixed bottom-0 left-0 z-20 w-full p-4 bg-white/60 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+    <ul
+      class="flex justify-between items-center mt-3 text-sm font-medium w-full text-gray-500 dark:text-gray-400 sm:mt-0">
+      <li>
+        <a href="#" class="gap-2 flex hover:underline me-4 md:me-6">Made with
+          <img src="./img/Line 2.svg" alt="">
+          <img class="h-5" src="./img/tailgrids.svg" alt="">
+        </a>
+      </li>
+      <li class="">
+        <a href="#">
+          <button type="button"
+            class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m5 15 7-7 7 7" />
+            </svg>
+
+            <span class="sr-only">Icon description</span>
+          </button></a>
+      </li>
+    </ul>
+  </footer>
+
+  <!-- END OF FOOTER -->
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+  <script src="./index.js"></script>
+  <script>
+    import AOS from "aos";
+    import "aos/dist/aos.css";
+    AOS.init({
+      duration: 300, // animation duration (in ms)
+      easing: "ease-in-out", // animation easing
+      once: true, // whether animation should happen only once
+    });
+  </script>
+</body>
+
+</html>

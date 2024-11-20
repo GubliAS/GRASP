@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRASP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+
+      theme: {
+        fontType: {
+          sans: '"Bangers"',
+          logo: '"Markazi"',
+        },
+        extend: {
+          colors: {
+            primary: "#6E56FE",
+            secondary: "#E5E7EB",
+            btn_default: "#a78bfa",
+            btn_hover: "#8b5cf6",
+            btn_focus: "#4c1d95",
+          },
+        },
+      },
+    };
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      }
+    </style>
+  <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (
+      localStorage.getItem("color-theme") === "dark" ||
+      (!("color-theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+  <nav class="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="flex items-center space-x-2 rtl:space-x-reverse">
+        <img src="./img/grasp-logo-dark.svg" class="h-0 dark:h-9" alt="Flowbite Logo" />
+        <img src="./img/grasp-logo-light.svg" class="dark:hidden h-9" alt="Flowbite Logo" />
+        <span
+          class="font-[Bangers] self-center text-blue-700 text-3xl font-semibold whitespace-nowrap dark:text-white">GRASP</span>
+      </a>
+      <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+        <button type="button"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Sign Up
+        </button>
+        <button id="theme-toggle" type="button"
+          class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+          <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+              fill-rule="evenodd" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <button data-collapse-toggle="navbar-sticky" type="button"
+          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="navbar-sticky" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15" />
+          </svg>
+        </button>
+      </div>
+      <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+        <ul
+          class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <li>
+            <a href="./Index.html"
+              class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+              aria-current="page">Home</a>
+          </li>
+          <li>
+            <a href="./About.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">About</a>
+          </li>
+          <li>
+            <a href="./Pricing.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Pricing</a>
+          </li>
+          <li>
+            <a href="./Team.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Team</a>
+          </li>
+          <li>
+            <a href="./Contact.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+          </li>
+          <li>
+            <a href="./Blog.html"
+              class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Blog</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- END OF NAVBAR -->
+  <!-- HERO SECTION -->
+  <section class="mt-[68px] p-4 pb-0 bg-white dark:bg-gray-900" >
+    <div class="max-w-[665px] mx-auto" >
+      <h1
+        class="font-[Bangers] tracking-widest text-[24px] md:text-[44px] mx-auto font-bold text-blue-700 dark:text-white text-center">
+        Empower Your Vision, Seize Opportunities, Build Your Future.
+      </h1>
+      <p class="text-[20px] mx-auto font-bold text-gray-500 dark:text-white text-center">
+        "GRASP empowers you to turn dreams into achievements. Discover the tools, insights, and inspiration you need to
+        reach
+        new heights and shape your future."
+      </p>
+    </div>
+    <div class="flex max-w-[350px] mx-auto py-[30px]">
+      <button type="button"
+        class="text-white dark:text-black bg-gray-500 dark:bg-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:hover:bg-gray-300 focus:outline-none dark:focus:ring-blue-800">
+        Download Now
+      </button>
+      <button type="button"
+        class="text-white flex bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+        <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd"
+            d="M12.006 2a9.847 9.847 0 0 0-6.484 2.44 10.32 10.32 0 0 0-3.393 6.17 10.48 10.48 0 0 0 1.317 6.955 10.045 10.045 0 0 0 5.4 4.418c.504.095.683-.223.683-.494 0-.245-.01-1.052-.014-1.908-2.78.62-3.366-1.21-3.366-1.21a2.711 2.711 0 0 0-1.11-1.5c-.907-.637.07-.621.07-.621.317.044.62.163.885.346.266.183.487.426.647.71.135.253.318.476.538.655a2.079 2.079 0 0 0 2.37.196c.045-.52.27-1.006.635-1.37-2.219-.259-4.554-1.138-4.554-5.07a4.022 4.022 0 0 1 1.031-2.75 3.77 3.77 0 0 1 .096-2.713s.839-.275 2.749 1.05a9.26 9.26 0 0 1 5.004 0c1.906-1.325 2.74-1.05 2.74-1.05.37.858.406 1.828.101 2.713a4.017 4.017 0 0 1 1.029 2.75c0 3.939-2.339 4.805-4.564 5.058a2.471 2.471 0 0 1 .679 1.897c0 1.372-.012 2.477-.012 2.814 0 .272.18.592.687.492a10.05 10.05 0 0 0 5.388-4.421 10.473 10.473 0 0 0 1.313-6.948 10.32 10.32 0 0 0-3.39-6.165A9.847 9.847 0 0 0 12.007 2Z"
+            clip-rule="evenodd" />
+        </svg>
+
+        Download Now
+      </button>
+    </div>
+    <div>
+      <p class="text-center font-[Bangers] tracking-widest text-[20px] font-bold text-blue-700 dark:text-white">
+        Built with latest technology
+      </p>
+      <div class="mx-auto max-w-[400px] grid grid-cols-4 py-4">
+        <svg class="max-w-20 max-h-20 text-gray-500 dark:text-blue-700" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg" width="" height="" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M21.718 12c0-1.429-1.339-2.681-3.467-3.5.029-.18.077-.37.1-.545.217-2.058-.273-3.543-1.379-4.182-1.235-.714-2.983-.186-4.751 1.239C10.45 3.589 8.7 3.061 7.468 3.773c-1.107.639-1.6 2.124-1.379 4.182.018.175.067.365.095.545-2.127.819-3.466 2.071-3.466 3.5 0 1.429 1.339 2.681 3.466 3.5-.028.18-.077.37-.095.545-.218 2.058.272 3.543 1.379 4.182.376.213.803.322 1.235.316a5.987 5.987 0 0 0 3.514-1.56 5.992 5.992 0 0 0 3.515 1.56 2.44 2.44 0 0 0 1.236-.316c1.106-.639 1.6-2.124 1.379-4.182-.019-.175-.067-.365-.1-.545 2.132-.819 3.471-2.071 3.471-3.5Zm-6.01-7.548a1.5 1.5 0 0 1 .76.187c.733.424 1.055 1.593.884 3.212-.012.106-.043.222-.058.33-.841-.243-1.7-.418-2.57-.523a16.165 16.165 0 0 0-1.747-1.972 4.9 4.9 0 0 1 2.731-1.234Zm-7.917 8.781c.172.34.335.68.529 1.017.194.337.395.656.6.969a14.09 14.09 0 0 1-1.607-.376 14.38 14.38 0 0 1 .478-1.61Zm-.479-4.076a14.085 14.085 0 0 1 1.607-.376c-.205.313-.405.634-.6.969-.195.335-.357.677-.529 1.017-.19-.527-.35-1.064-.478-1.61ZM8.3 12a19.32 19.32 0 0 1 .888-1.75c.33-.568.69-1.118 1.076-1.65.619-.061 1.27-.1 1.954-.1.684 0 1.333.035 1.952.1a19.63 19.63 0 0 1 1.079 1.654c.325.567.621 1.15.887 1.746a18.869 18.869 0 0 1-1.953 3.403 19.218 19.218 0 0 1-3.931 0 20.169 20.169 0 0 1-1.066-1.653A19.324 19.324 0 0 1 8.3 12Zm7.816 2.25c.2-.337.358-.677.53-1.017.191.527.35 1.065.478 1.611a14.48 14.48 0 0 1-1.607.376c.202-.314.404-.635.597-.97h.002Zm.53-3.483c-.172-.34-.335-.68-.53-1.017a20.214 20.214 0 0 0-.6-.97c.542.095 1.078.22 1.606.376a14.111 14.111 0 0 1-.478 1.611h.002ZM12.217 6.34c.4.375.777.773 1.13 1.193-.37-.02-.746-.033-1.129-.033s-.76.013-1.131.033c.353-.42.73-.817 1.13-1.193Zm-4.249-1.7a1.5 1.5 0 0 1 .76-.187 4.9 4.9 0 0 1 2.729 1.233A16.253 16.253 0 0 0 9.71 7.658c-.87.105-1.728.28-2.569.524-.015-.109-.047-.225-.058-.331-.171-1.619.151-2.787.885-3.211ZM3.718 12c0-.9.974-1.83 2.645-2.506.218.857.504 1.695.856 2.506-.352.811-.638 1.65-.856 2.506C4.692 13.83 3.718 12.9 3.718 12Zm4.25 7.361c-.734-.423-1.056-1.593-.885-3.212.011-.106.043-.222.058-.331.84.243 1.697.418 2.564.524a16.37 16.37 0 0 0 1.757 1.982c-1.421 1.109-2.714 1.488-3.494 1.037Zm3.11-2.895c.374.021.753.034 1.14.034.387 0 .765-.013 1.139-.034a14.4 14.4 0 0 1-1.14 1.215 14.248 14.248 0 0 1-1.139-1.215Zm5.39 2.895c-.782.451-2.075.072-3.5-1.038a16.248 16.248 0 0 0 1.757-1.981 16.41 16.41 0 0 0 2.565-.523c.015.108.046.224.058.33.175 1.619-.148 2.789-.88 3.212Zm1.6-4.854A16.563 16.563 0 0 0 17.216 12c.352-.812.638-1.65.856-2.507 1.671.677 2.646 1.607 2.646 2.507 0 .9-.975 1.83-2.646 2.507h-.004Z" />
+          <path d="M12.215 13.773a1.792 1.792 0 1 0-1.786-1.8v.006a1.787 1.787 0 0 0 1.786 1.794Z" />
+        </svg>
+        <svg class="max-w-20 max-h-20 text-blue-700 dark:text-white" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg" width="" height="" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M11.782 5.72a4.773 4.773 0 0 0-4.8 4.173 3.43 3.43 0 0 1 2.741-1.687c1.689 0 2.974 1.972 3.758 2.587a5.733 5.733 0 0 0 5.382.935c2-.638 2.934-2.865 3.137-3.921-.969 1.379-2.44 2.207-4.259 1.231-1.253-.673-2.19-3.438-5.959-3.318ZM6.8 11.979A4.772 4.772 0 0 0 2 16.151a3.431 3.431 0 0 1 2.745-1.687c1.689 0 2.974 1.972 3.758 2.587a5.733 5.733 0 0 0 5.382.935c2-.638 2.933-2.865 3.137-3.921-.97 1.379-2.44 2.208-4.259 1.231-1.253-.673-2.19-3.443-5.963-3.317Z" />
+        </svg>
+        <svg class="max-w-20 max-h-20 text-gray-500 dark:text-blue-700" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg" width="" height="" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M14.5 3 12 7.156 9.857 3H2l10 18L22 3h-7.5ZM4.486 4.5h2.4L12 13.8l5.107-9.3h2.4L12 18.021 4.486 4.5Z" />
+        </svg>
+        <svg class="max-w-20 max-h-20 text-blue-700 dark:text-white" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg" width="" height="" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M21.718 12c0-1.429-1.339-2.681-3.467-3.5.029-.18.077-.37.1-.545.217-2.058-.273-3.543-1.379-4.182-1.235-.714-2.983-.186-4.751 1.239C10.45 3.589 8.7 3.061 7.468 3.773c-1.107.639-1.6 2.124-1.379 4.182.018.175.067.365.095.545-2.127.819-3.466 2.071-3.466 3.5 0 1.429 1.339 2.681 3.466 3.5-.028.18-.077.37-.095.545-.218 2.058.272 3.543 1.379 4.182.376.213.803.322 1.235.316a5.987 5.987 0 0 0 3.514-1.56 5.992 5.992 0 0 0 3.515 1.56 2.44 2.44 0 0 0 1.236-.316c1.106-.639 1.6-2.124 1.379-4.182-.019-.175-.067-.365-.1-.545 2.132-.819 3.471-2.071 3.471-3.5Zm-6.01-7.548a1.5 1.5 0 0 1 .76.187c.733.424 1.055 1.593.884 3.212-.012.106-.043.222-.058.33-.841-.243-1.7-.418-2.57-.523a16.165 16.165 0 0 0-1.747-1.972 4.9 4.9 0 0 1 2.731-1.234Zm-7.917 8.781c.172.34.335.68.529 1.017.194.337.395.656.6.969a14.09 14.09 0 0 1-1.607-.376 14.38 14.38 0 0 1 .478-1.61Zm-.479-4.076a14.085 14.085 0 0 1 1.607-.376c-.205.313-.405.634-.6.969-.195.335-.357.677-.529 1.017-.19-.527-.35-1.064-.478-1.61ZM8.3 12a19.32 19.32 0 0 1 .888-1.75c.33-.568.69-1.118 1.076-1.65.619-.061 1.27-.1 1.954-.1.684 0 1.333.035 1.952.1a19.63 19.63 0 0 1 1.079 1.654c.325.567.621 1.15.887 1.746a18.869 18.869 0 0 1-1.953 3.403 19.218 19.218 0 0 1-3.931 0 20.169 20.169 0 0 1-1.066-1.653A19.324 19.324 0 0 1 8.3 12Zm7.816 2.25c.2-.337.358-.677.53-1.017.191.527.35 1.065.478 1.611a14.48 14.48 0 0 1-1.607.376c.202-.314.404-.635.597-.97h.002Zm.53-3.483c-.172-.34-.335-.68-.53-1.017a20.214 20.214 0 0 0-.6-.97c.542.095 1.078.22 1.606.376a14.111 14.111 0 0 1-.478 1.611h.002ZM12.217 6.34c.4.375.777.773 1.13 1.193-.37-.02-.746-.033-1.129-.033s-.76.013-1.131.033c.353-.42.73-.817 1.13-1.193Zm-4.249-1.7a1.5 1.5 0 0 1 .76-.187 4.9 4.9 0 0 1 2.729 1.233A16.253 16.253 0 0 0 9.71 7.658c-.87.105-1.728.28-2.569.524-.015-.109-.047-.225-.058-.331-.171-1.619.151-2.787.885-3.211ZM3.718 12c0-.9.974-1.83 2.645-2.506.218.857.504 1.695.856 2.506-.352.811-.638 1.65-.856 2.506C4.692 13.83 3.718 12.9 3.718 12Zm4.25 7.361c-.734-.423-1.056-1.593-.885-3.212.011-.106.043-.222.058-.331.84.243 1.697.418 2.564.524a16.37 16.37 0 0 0 1.757 1.982c-1.421 1.109-2.714 1.488-3.494 1.037Zm3.11-2.895c.374.021.753.034 1.14.034.387 0 .765-.013 1.139-.034a14.4 14.4 0 0 1-1.14 1.215 14.248 14.248 0 0 1-1.139-1.215Zm5.39 2.895c-.782.451-2.075.072-3.5-1.038a16.248 16.248 0 0 0 1.757-1.981 16.41 16.41 0 0 0 2.565-.523c.015.108.046.224.058.33.175 1.619-.148 2.789-.88 3.212Zm1.6-4.854A16.563 16.563 0 0 0 17.216 12c.352-.812.638-1.65.856-2.507 1.671.677 2.646 1.607 2.646 2.507 0 .9-.975 1.83-2.646 2.507h-.004Z" />
+          <path d="M12.215 13.773a1.792 1.792 0 1 0-1.786-1.8v.006a1.787 1.787 0 0 0 1.786 1.794Z" />
+        </svg>
+      </div>
+    </div>
+    <div class="mx-auto max-w-fit">
+      <img class=" " src="./img/hero-image.png" alt="" />
+    </div>
+  </section>
+  <!-- END OF HERO -->
+  <!-- FEATURES SECTION -->
+  <section class="relative px-4 py-10 md:py-20 bg-blue-700 dark:bg-gray-700">
+    <svg class="absolute top-0 right-1 max-w-[300px]" width="" height="470" viewBox="0 0 493 470" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <circle cx="462" cy="5" r="138" stroke="white" stroke-opacity="0.04" stroke-width="50"></circle>
+      <circle cx="49" cy="470" r="39" stroke="white" stroke-opacity="0.04" stroke-width="20"></circle>
+      <path d="M222.393 226.701L272.808 213.192L259.299 263.607L222.393 226.701Z" stroke="white" stroke-opacity="0.06"
+        stroke-width="13"></path>
+    </svg>
+    <svg class="absolute left-0 bottom-0 max-w-[300px]" width="" height="470" viewBox="0 0 493 470" fill="none"
+      xmlns="http://www.w3.org/2000/svg">
+      <circle cx="462" cy="5" r="138" stroke="white" stroke-opacity="0.04" stroke-width="50"></circle>
+      <circle cx="49" cy="470" r="39" stroke="white" stroke-opacity="0.04" stroke-width="20"></circle>
+      <path d="M222.393 226.701L272.808 213.192L259.299 263.607L222.393 226.701Z" stroke="white" stroke-opacity="0.06"
+        stroke-width="13"></path>
+    </svg>
+    
+    
+    <h3 class="mx-auto text-[24px] text-white dark:text-blue-700 text-center font-bold font-[Bangers] tracking-widest">
+      Features
+    </h3>
+    <h1 class="text-[32px] text-white dark:text-white font-bold text-center mx-auto">
+      Main Features Of Play
+    </h1>
+    <p class="mb-[64px] text-gray-400 dark:text-gray-400 text-[16px] max-w-[400px] mx-auto font-semibold  text-center">
+      There are many variations of passages of Lorem Ipsum available but the
+      majority have suffered alteration in some form.
+    </p>
+    <div class="p-4 mx-auto max-w-[900px] grid grid-cols-1 gap-[64px] md:grid-cols-2">
+      <div class="group mx-auto grid grid-cols-1 gap-[16px] max-w-[380px]">
+        <div class="z-10 relative">
+          <div
+            class="min-w-[50px] min-h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-white dark:bg-white  rounded-lg text-gray-500 dark:text-blue-700"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M20 7h-.7c.229-.467.349-.98.351-1.5a3.5 3.5 0 0 0-3.5-3.5c-1.717 0-3.215 1.2-4.331 2.481C10.4 2.842 8.949 2 7.5 2A3.5 3.5 0 0 0 4 5.5c.003.52.123 1.033.351 1.5H4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9a2 2 0 0 0-2-2Zm-9.942 0H7.5a1.5 1.5 0 0 1 0-3c.9 0 2 .754 3.092 2.122-.219.337-.392.635-.534.878Zm6.1 0h-3.742c.933-1.368 2.371-3 3.739-3a1.5 1.5 0 0 1 0 3h.003ZM13 14h-2v8h2v-8Zm-4 0H4v6a2 2 0 0 0 2 2h3v-8Zm6 0v8h3a2 2 0 0 0 2-2v-6h-5Z" />
+          </svg>
+        </div>
+        <h1 class="text-[24px] font-medium dark:white text-white">
+          Free and Open-Source
+        </h1>
+        <p class="text-[16px] font-semibold dark:text-gray-300 text-white">
+          Lorem Ipsum is simply dummy text of the printing and industry.
+        </p>
+        <a href="#"><span class="text-[16px] font-semibold text-white dark:text-white dark:hover:text-blue-700 hover:text-gray-500">Learn More</span></a>
+      </div>
+      <!--  -->
+      <div class="group mx-auto grid grid-cols-1 gap-[16px] max-w-[380px]">
+        <div class="z-10 relative">
+          <div
+            class="min-w-[50px] min-h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+
+          <svg class="w-[50px] h-[55px] p-2 bg-white dark:bg-white rounded-lg text-gray-500 dark:text-blue-700"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-width="2"
+              d="M3 11h18m-9 0v8m-8 0h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z" />
+          </svg>
+        </div>
+        <h1 class="text-[24px] font-medium dark:text-white text-white">
+          Multipurpose Template
+        </h1>
+        <p class="text-[16px] font-semibold dark:text-gray-300 text-white">
+          Lorem Ipsum is simply dummy text of the printing and industry.
+        </p>
+        <a href="#"><span class="text-[16px] font-semibold text-white dark:hover:text-blue-700 hover:text-gray-500">Learn More</span></a>
+      </div>
+      <!--  -->
+      <div class="group mx-auto grid grid-cols-1 gap-[16px] max-w-[380px]">
+        <div class="z-10 relative">
+          <div
+            class="min-w-[50px] min-h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-white dark:bg-white rounded-lg text-gray-500 dark:text-blue-700"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              d="M20 7h-.7c.229-.467.349-.98.351-1.5a3.5 3.5 0 0 0-3.5-3.5c-1.717 0-3.215 1.2-4.331 2.481C10.4 2.842 8.949 2 7.5 2A3.5 3.5 0 0 0 4 5.5c.003.52.123 1.033.351 1.5H4a2 2 0 0 0-2 2v2a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9a2 2 0 0 0-2-2Zm-9.942 0H7.5a1.5 1.5 0 0 1 0-3c.9 0 2 .754 3.092 2.122-.219.337-.392.635-.534.878Zm6.1 0h-3.742c.933-1.368 2.371-3 3.739-3a1.5 1.5 0 0 1 0 3h.003ZM13 14h-2v8h2v-8Zm-4 0H4v6a2 2 0 0 0 2 2h3v-8Zm6 0v8h3a2 2 0 0 0 2-2v-6h-5Z" />
+          </svg>
+        </div>
+        <h1 class="text-[24px] font-medium dark:text-white text-white">
+          High-quality Design
+        </h1>
+        <p class="text-[16px] font-semibold dark:text-gray-300 text-white">
+          Lorem Ipsum is simply dummy text of the printing and industry.
+        </p>
+        <a href="#"><span class="text-[16px] font-semibold text-white dark:hover:text-blue-700 hover:text-gray-500">Learn More</span></a>
+      </div>
+      <!--  -->
+      <div class="group mx-auto grid grid-cols-1 gap-[16px] max-w-[380px]">
+        <div class="z-10 relative">
+          <div
+            class="min-w-[50px] min-h-[55px] group-hover:rotate-45 duration-300 bg-blue-200 rounded-lg bg rotate-[25deg]">
+          </div>
+          <svg class="w-[50px] h-[55px] p-2 bg-white dark:bg-white rounded-lg text-gray-500 dark:text-blue-700"
+            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+            viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z" />
+          </svg>
+        </div>
+        <h1 class="text-[24px] font-medium dark:text-white text-white">
+          All Essential Elements
+        </h1>
+        <p class="text-[16px] font-semibold dark:text-gray-300 text-white">
+          Lorem Ipsum is simply dummy text of the printing and industry.
+        </p>
+        <a href="#"><span class="text-[16px] font-semibold text-white dark:hover:text-blue-700 hover:text-gray-500">Learn More</span></a>
+      </div>
+    </div>
+  </section>
+  <!-- END OF FEATURES -->
+  <!--  -->
+  <section class="px-4 dark:bg-gray-900 py-[100px]">
+    <!-- textarea -->
+    <div class="text-center leading-tight mb-16">
+      <h1 class="text-[44px] tracking-widest font-semibold text-blue-700 font-[Bangers]">
+        More Like This
+      </h1>
+      <p class="text-gray-500 font-medium">
+        Explore related ideas you would love...
+      </p>
+    </div>
+
+    <!-- CARDS -->
+    <div class="flex flex-col md:flex-row gap-16 justify-center items-center">
+
+      <!-- CARD 1 -->
+      <div class="max-w-md bg-white border border-blue-700 rounded-lg shadow ">
+        <a href="#">
+          <img class="rounded-t-lg" src="./img/empyreal website.png" alt="" />
+        </a>
+        <div class="p-5">
+          <a href="#">
+            <h5 class="mb-2 text-2xl font-[Bangers] font-bold tracking-widest text-blue-700">Empyreal Dogs</h5>
+          </a>
+          <p class="mb-3 font-medium text-gray-700 dark:text-gray-700">A starter template we made for marketing websites
+            &
+            landing pages.
+            Built with HTML 5 and tailwind css.
+          </p>
+
+          <div class="flex gap-3 items-center">
+            <svg fill="black" version="1.1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" width="45px" height="45px" viewBox="0 0 512 512"
+              enable-background="new 0 0 512 512" xml:space="preserve">
+
+              <g id="c133de6af664cd4f011a55de6b000d0b">
+
+                <path display="inline"
+                  d="M108.669,0.501h23.032v22.756h21.069V0.501h23.034V69.41h-23.032V46.334h-21.069V69.41h-23.032V0.501
+                                                                                  H108.669z M206.091,23.353h-20.275V0.501h63.594v22.852h-20.285V69.41h-23.032V23.353H206.091z M259.502,0.501h24.02l14.771,24.213
+                                                                                  l14.759-24.213h24.023V69.41h-22.938V35.256l-15.845,24.5h-0.395l-15.856-24.5V69.41h-22.539V0.501z M348.54,0.501h23.038v46.133
+                                                                                  h32.391V69.41H348.54V0.501z M74.987,100.926l32.946,369.533l147.844,41.04L404.031,470.4l32.981-369.475H74.987z M368.289,188.62
+                                                                                  l-2.063,22.977l-0.906,10.188h-0.149H256h-0.158h-63.956l4.142,46.407h59.814H256h92.98h12.214l-1.106,12.172l-10.65,119.32
+                                                                                  l-0.682,7.652L256,433.045v0.008l-0.208,0.059l-92.839-25.774l-6.351-71.161h20.97h24.527l3.227,36.146l50.474,13.632l0.042-0.013
+                                                                                  v-0.004l50.551-13.64l5.257-58.781H256h-0.158H154.578L143.439,188.62l-1.085-12.157h113.488H256h113.374L368.289,188.62z">
+
+                </path>
+
+              </g>
+
+            </svg>
+
+            <svg fill="grey" width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+              xml:space="preserve">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 6.036c-2.667 0-4.333 1.325-5 3.976 1-1.325 2.167-1.822 3.5-1.491.761.189 1.305.738 1.906 1.345C13.387 10.855 14.522 12 17 12c2.667 0 4.333-1.325 5-3.976-1 1.325-2.166 1.822-3.5 1.491-.761-.189-1.305-.738-1.907-1.345-.98-.99-2.114-2.134-4.593-2.134zM7 12c-2.667 0-4.333 1.325-5 3.976 1-1.326 2.167-1.822 3.5-1.491.761.189 1.305.738 1.907 1.345.98.989 2.115 2.134 4.594 2.134 2.667 0 4.333-1.325 5-3.976-1 1.325-2.167 1.822-3.5 1.491-.761-.189-1.305-.738-1.906-1.345C10.613 13.145 9.478 12 7 12z" />
+            </svg>
+
+            <svg fill="black" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="45px" height="45px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+            
+              <g id="c133de6af664cd4f011a55de6b001a2b">
+            
+                <path display="inline" d="M204.064,46.682v22.018h-56.302V0.501h56.302v24.13h-32.172v22.051H204.064z M261.941,24.631h22.492
+                                                                        V0.501h-56.308c0,0,0,12.112,0,24.13c7.533,7.533,11.461,11.139,22.356,22.034c-6.369,0-22.356,0.022-22.356,0.021v22.014h56.308
+                                                                        V46.682L261.941,24.631z M341.746,24.631h22.49V0.501H307.93c0,0,0,12.112,0,24.13c7.531,7.533,11.461,11.139,22.355,22.034
+                                                                        c-6.365,0-22.355,0.022-22.355,0.021v22.014h56.307V46.682L341.746,24.631z M438.395,101.112l-34.203,370.486l-148.193,39.9
+                                                                        l-148.196-39.9L73.605,101.112H438.395z M369.477,176.444H255.865h-115.62l5.529,44.739h110.091h6.184l-6.184,2.574
+                                                                        l-106.067,44.177l3.518,43.73l102.549,0.333l54.963,0.175l-3.521,58.311l-51.442,14.484v-0.046l-0.422,0.116l-49.684-12.542
+                                                                        l-3.015-36.195h-0.164h-46.085h-0.162l6.032,69.876l93.5,27.649v-0.05l0.168,0.05l93-27.146L361.1,267.935H255.865h-0.26
+                                                                        l0.26-0.112l109.086-46.639L369.477,176.444z">
+            
+                </path>
+            
+              </g>
+            
+            </svg>
+
+
+
+
+          </div>
+
+          <!-- btn view -->
+          <div class="flex justify-end">
+            <a href="#"
+              class="inline-flex items-center px-5 py-2 text-white font-medium text-center  bg-blue-700 rounded rounded-btn hover:bg-blue-800 ">
+              Preview
+              <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- CARD 2 -->
+      <div class="max-w-md bg-black border border-blue-700 rounded-lg shadow ">
+        <a href="#">
+          <img class="rounded-t-lg" src="./img/K.ko website.png" alt="" />
+        </a>
+        <div class="p-5">
+          <a href="#">
+            <h5 class="mb-2 text-2xl font-bold tracking-widest font-[Bangers] text-white">Krafty koncepts</h5>
+          </a>
+          <p class="mb-3 font-normal text-gray-400 dark:text-gray-400">A starter template we made for marketing websites
+            &
+            landing pages.
+            Built with HTML 5 and tailwind css.
+          </p>
+
+          <div class="flex gap-3 items-center">
+            <svg fill="blue" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="45px" height="45px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+
+              <g id="c133de6af664cd4f011a55de6b000d0b">
+
+                <path display="inline"
+                  d="M108.669,0.501h23.032v22.756h21.069V0.501h23.034V69.41h-23.032V46.334h-21.069V69.41h-23.032V0.501
+                                                                                  H108.669z M206.091,23.353h-20.275V0.501h63.594v22.852h-20.285V69.41h-23.032V23.353H206.091z M259.502,0.501h24.02l14.771,24.213
+                                                                                  l14.759-24.213h24.023V69.41h-22.938V35.256l-15.845,24.5h-0.395l-15.856-24.5V69.41h-22.539V0.501z M348.54,0.501h23.038v46.133
+                                                                                  h32.391V69.41H348.54V0.501z M74.987,100.926l32.946,369.533l147.844,41.04L404.031,470.4l32.981-369.475H74.987z M368.289,188.62
+                                                                                  l-2.063,22.977l-0.906,10.188h-0.149H256h-0.158h-63.956l4.142,46.407h59.814H256h92.98h12.214l-1.106,12.172l-10.65,119.32
+                                                                                  l-0.682,7.652L256,433.045v0.008l-0.208,0.059l-92.839-25.774l-6.351-71.161h20.97h24.527l3.227,36.146l50.474,13.632l0.042-0.013
+                                                                                  v-0.004l50.551-13.64l5.257-58.781H256h-0.158H154.578L143.439,188.62l-1.085-12.157h113.488H256h113.374L368.289,188.62z">
+
+                </path>
+
+              </g>
+            </svg>
+
+            <svg fill="grey" width="50px" height="50px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+              xml:space="preserve">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M12 6.036c-2.667 0-4.333 1.325-5 3.976 1-1.325 2.167-1.822 3.5-1.491.761.189 1.305.738 1.906 1.345C13.387 10.855 14.522 12 17 12c2.667 0 4.333-1.325 5-3.976-1 1.325-2.166 1.822-3.5 1.491-.761-.189-1.305-.738-1.907-1.345-.98-.99-2.114-2.134-4.593-2.134zM7 12c-2.667 0-4.333 1.325-5 3.976 1-1.326 2.167-1.822 3.5-1.491.761.189 1.305.738 1.907 1.345.98.989 2.115 2.134 4.594 2.134 2.667 0 4.333-1.325 5-3.976-1 1.325-2.167 1.822-3.5 1.491-.761-.189-1.305-.738-1.906-1.345C10.613 13.145 9.478 12 7 12z" />
+            </svg>
+
+            <svg fill="blue" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+              width="45px" height="45px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve">
+            
+              <g id="c133de6af664cd4f011a55de6b001a2b">
+            
+                <path display="inline" d="M204.064,46.682v22.018h-56.302V0.501h56.302v24.13h-32.172v22.051H204.064z M261.941,24.631h22.492
+                                                                                    V0.501h-56.308c0,0,0,12.112,0,24.13c7.533,7.533,11.461,11.139,22.356,22.034c-6.369,0-22.356,0.022-22.356,0.021v22.014h56.308
+                                                                                    V46.682L261.941,24.631z M341.746,24.631h22.49V0.501H307.93c0,0,0,12.112,0,24.13c7.531,7.533,11.461,11.139,22.355,22.034
+                                                                                    c-6.365,0-22.355,0.022-22.355,0.021v22.014h56.307V46.682L341.746,24.631z M438.395,101.112l-34.203,370.486l-148.193,39.9
+                                                                                    l-148.196-39.9L73.605,101.112H438.395z M369.477,176.444H255.865h-115.62l5.529,44.739h110.091h6.184l-6.184,2.574
+                                                                                    l-106.067,44.177l3.518,43.73l102.549,0.333l54.963,0.175l-3.521,58.311l-51.442,14.484v-0.046l-0.422,0.116l-49.684-12.542
+                                                                                    l-3.015-36.195h-0.164h-46.085h-0.162l6.032,69.876l93.5,27.649v-0.05l0.168,0.05l93-27.146L361.1,267.935H255.865h-0.26
+                                                                                    l0.26-0.112l109.086-46.639L369.477,176.444z">
+            
+                </path>
+            
+              </g>
+            
+            </svg>
+
+
+
+          </div>
+
+          <!-- btn view -->
+          <div class="flex justify-end">
+            <a href="#"
+              class="inline-flex items-center px-5 py-2 text-white font-medium text-center  bg-blue-700 rounded rounded-btn hover:bg-blue-800 ">
+              Preview
+              <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M1 5h12m0 0L9 1m4 4L9 9" />
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+      <!-- END OF CARDS -->
+    </div>
+
+  </section>
+  <!--  -->
+  <!-- FOOTER SECTION -->
+  <section class=" mx-auto mb-[85px] relative bg-white dark:bg-gray-900">
+    <img class="max-h-[400px]  absolute " src="./img/footer1.png" alt="">
+    <img class="absolute right-0 bottom-0 z-10" src="./img/footer2.png" alt="">
+    <div class="p-4  grid grid-cols-1 gap-[32px]  md:grid-cols-3">
+      <!--  -->
+      <div class="max-w-[330px]">
+        <a href="#" class="flex items-center space-x-2 rtl:space-x-reverse">
+          <img src="./img/grasp-logo-dark.svg" class="h-0 dark:h-9" alt="Flowbite Logo" />
+          <img src="./img/grasp-logo-light.svg" class="dark:hidden h-9" alt="Flowbite Logo" />
+          <span
+            class="font-[Bangers] self-center text-blue-700 text-3xl font-semibold whitespace-nowrap dark:text-white">GRASP</span>
+        </a>
+        <h2 class="text-gray-500 dark:text-white font-semibold text-[20px]">
+          We create digital experiences for brands and companies by using
+          technology.
+        </h2>
+        <div class="grid grid-cols-4 max-w-[200px]">
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M13.135 6H15V3h-1.865a4.147 4.147 0 0 0-4.142 4.142V9H7v3h2v9.938h3V12h2.021l.592-3H12V6.591A.6.6 0 0 1 12.592 6h.543Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M22 5.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.343 8.343 0 0 1-2.605.981A4.13 4.13 0 0 0 15.85 4a4.068 4.068 0 0 0-4.1 4.038c0 .31.035.618.105.919A11.705 11.705 0 0 1 3.4 4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 6.1 13.635a4.192 4.192 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 2 18.184 11.732 11.732 0 0 0 8.291 20 11.502 11.502 0 0 0 19.964 8.5c0-.177 0-.349-.012-.523A8.143 8.143 0 0 0 22 5.892Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden=" true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path fill="currentColor" fill-rule="evenodd"
+                d="M3 8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8Zm5-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H8Zm7.597 2.214a1 1 0 0 1 1-1h.01a1 1 0 1 1 0 2h-.01a1 1 0 0 1-1-1ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm-5 3a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"
+                clip-rule="evenodd" />
+            </svg></a>
+          <a href=""><svg class="w-7 h-7 text-gray-500 dark:text-blue-700" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+              <path fill-rule="evenodd"
+                d="M12.51 8.796v1.697a3.738 3.738 0 0 1 3.288-1.684c3.455 0 4.202 2.16 4.202 4.97V19.5h-3.2v-5.072c0-1.21-.244-2.766-2.128-2.766-1.827 0-2.139 1.317-2.139 2.676V19.5h-3.19V8.796h3.168ZM7.2 6.106a1.61 1.61 0 0 1-.988 1.483 1.595 1.595 0 0 1-1.743-.348A1.607 1.607 0 0 1 5.6 4.5a1.601 1.601 0 0 1 1.6 1.606Z"
+                clip-rule="evenodd" />
+              <path d="M7.2 8.809H4V19.5h3.2V8.809Z" />
+            </svg></a>
+        </div>
+      </div>
+      <!--  -->
+      <div class="min-w-[120px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">About Us</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Home</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Features
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">About</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">
+            Testimonial</p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[130px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Features</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">How it
+            works</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Privacy
+            policy</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Terms of
+            service</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Refund
+            policy</p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[140px]">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Our Products</h2>
+        <a href="#">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">LineIcons
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Ecommerce
+            GTML</p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Tailwind
+          </p>
+        </a>
+        <a href="">
+          <p class="dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-gray-500 dark:text-white">Plainwind
+          </p>
+        </a>
+      </div>
+      <!--  -->
+      <div class="min-w-[230px] ">
+        <h2 class="text-[20px] pb-5 text-blue-700 dark:text-white font-bold">Latest blog</h2>
+        <a href="" class="flex gap-5 group">
+          <img class="h-[50px]" src="./img/blog4.png" alt="">
+          <p class=" group-hover:text-gray-400 font-semibold text-gray-500 dark:text-white">I think really important to
+            design with...</p>
+        </a>
+        <a href="" class="flex gap-5 group">
+          <img class="h-[50px]" src="./img/blog5.png" alt="">
+          <p class="font-semibold group-hover:text-gray-400 text-gray-500 dark:text-white">Recognising the need is the
+            primary</p>
+        </a>
+
+      </div>
+      <!--  -->
+    </div>
+    <div class="">
+      <hr class="border-gray-300 my-8">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <div class="grid grid-cols-3 p-4">
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Privacy policy</p>
+          </a>
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Legal notice</p>
+          </a>
+          <a href="">
+            <p
+              class="max-w-fit dark:hover:text-gray-400 hover:text-gray-400 font-semibold text-blue-700 dark:text-white">
+              Terms of service</p>
+          </a>
+        </div>
+        <p class="p-4 md:ml-auto font-semibold text-blue-700 dark:text-white ">Designed and Developed by <span
+            class="text-black dark:text-blue-700 font-bold font-[Bangers] tracking-wider text-[18px]">GubliAS</span></p>
+
+      </div>
+    </div>
+  </section>
+
+
+  <footer
+    class="fixed bottom-0 left-0 z-20 w-full p-4 bg-white/60 border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+    <ul
+      class="flex justify-between items-center mt-3 text-sm font-medium w-full text-gray-500 dark:text-gray-400 sm:mt-0">
+      <li>
+        <a href="#" class="gap-2 flex hover:underline me-4 md:me-6">Made with
+          <img src="./img/Line 2.svg" alt="">
+          <img class="h-5" src="./img/tailgrids.svg" alt="">
+        </a>
+      </li>
+      <li class="">
+        <a href="#">
+          <button type="button"
+            class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m5 15 7-7 7 7" />
+            </svg>
+
+            <span class="sr-only">Icon description</span>
+          </button></a>
+      </li>
+    </ul>
+  </footer>
+
+  <!-- END OF FOOTER -->
+ 
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script src="./index.js"></script>
+  <script>
+    import AOS from "aos";
+      import "aos/dist/aos.css";
+    AOS.init({
+        duration: 300, // animation duration (in ms)
+        easing: "ease-in-out", // animation easing
+        once: true, // whether animation should happen only once
+      });
+  </script>
+</body>
+
+</html>

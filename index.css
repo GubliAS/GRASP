@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Markazi+Text:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Markazi+Text:wght@400..700&display=swap');
+
+.bg{
+    z-index: -1;
+    position: absolute;
+}
